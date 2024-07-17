@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import xyz.erupt.annotation.constant.JavaType;
 import xyz.erupt.annotation.fun.VLModel;
@@ -54,7 +55,7 @@ public class EruptExcelService {
      */
     public Workbook exportExcel(EruptModel eruptModel, Page page) {
         // XSSFWorkbook、SXSSFWorkbook
-        Workbook wb = new SXSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet(eruptModel.getErupt().name());
         sheet.setZoom(160);
         //冻结首行
@@ -85,6 +86,10 @@ public class EruptExcelService {
         }
         CellStyle style = ExcelUtil.beautifyExcelStyle(wb);
         for (Map<String, Object> map : page.getList()) {
+            if (map == null || map.isEmpty()) {
+                continue; // 跳过空行
+            }
+    
             int dataColNum = 0;
             row = sheet.createRow(++rowIndex);
             for (EruptFieldModel fieldModel : eruptModel.getEruptFieldModels()) {
